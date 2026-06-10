@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Celebration for Kimo!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap');
+
+        body {
+            background-color: #fcf8f8;
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            color: #4a2c2a;
+        }
+
+        /* ستيل الكويز */
+        #quiz-container {
+            max-width: 400px;
+            margin: 60px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(234, 191, 191, 0.3);
+            position: relative;
+        }
+
+        .quiz-header {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: #511824;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .quiz-sub {
+            color: #a64b63;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        h3 { color: #5c3a3a; font-size: 20px; margin-bottom: 20px; line-height: 1.6; }
+        
+        .btn-quiz {
+            display: block;
+            width: 100%;
+            background: #fff;
+            border: 2px solid #f3e1e1;
+            padding: 14px;
+            margin: 12px 0;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #5c3a3a;
+            font-family: 'Cairo', sans-serif;
+            transition: 0.3s;
+        }
+        .btn-quiz:hover { background: #fbebeb; border-color: #eabfbf; }
+
+        /* نافذة الخطأ المستوحاة من صورتك */
+        #error-popup {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .popup-content {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            width: 80%;
+            max-width: 320px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: popIn 0.3s ease-in-out;
+        }
+        .popup-emoji { font-size: 60px; margin-bottom: 10px; }
+        .popup-text { font-size: 20px; font-weight: bold; color: #2c1a19; margin-bottom: 20px; }
+        .btn-retry {
+            background: #511824;
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* ستيل المفاجأة */
+        #surprise-container {
+            display: none;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        /* الصفحة الترحيبية الأولى بعد الكويز */
+        .celebrate-header {
+            background: radial-gradient(circle, #fff0f5 0%, #fcf8f8 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .celebrate-main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            margin-bottom: 5px;
+            color: #511824;
+        }
+        .celebrate-name-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 54px;
+            font-style: italic;
+            margin-top: 0;
+            color: #a64b63;
+        }
+
+        .main-celebrate-btn {
+            background-color: #511824;
+            color: white;
+            padding: 15px 45px;
+            border-radius: 30px;
+            font-size: 18px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 40px;
+            display: inline-block;
+            box-shadow: 0 6px 15px rgba(81, 24, 36, 0.3);
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+        .main-celebrate-btn:hover { transform: scale(1.05); }
+
+        /* شبكة الـ 6 صور */
+        .memories-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: #a64b63;
+            text-transform: uppercase;
+            margin-top: 70px;
+        }
+        
+        .memories-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: #3d1b24;
+            font-weight: normal;
+            margin-top: 5px;
+        }
+
+        .card {
+            background: white;
+            padding: 10px 10px 15px 10px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+        }
+        .card img {
+            width: 100%;
+            border-radius: 15px;
+            object-fit: cover;
+            height: 180px;
+        }
+
+        /* صندوق الرسالة الخاصة بكِ */
+        .message-box {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 0 25px;
+            line-height: 2;
+            font-size: 19px;
+            color: #4a2c2a;
+            text-align: right;
+            direction: rtl;
+        }
+        .message-en {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            direction: ltr;
+            font-size: 17px;
+            color: #5c3a3a;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        /* ستيل الفيديو المباشر من جيت هاب */
+        .video-container {
+            max-width: 500px;
+            margin: 40px auto 100px auto;
+            padding: 0 15px;
+        }
+        .video-wrapper {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            background: #000;
+        }
+        video {
+            width: 100%;
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="quiz-container">
+        <div class="quiz-header">!Quick Quiz for Kimo</div>
+        <div class="quiz-sub">جاوب صح عشان تعرف تعدي 😉</div>
+        <hr style="border: 0; border-top: 1px solid #f3e1e1; margin-bottom: 20px;">
+        <h3 id="question-text">جاري تحميل السؤال...</h3>
+        <div id="options-container"></div>
+    </div>
+
+    <div id="error-popup">
+        <div class="popup-content">
+            <div class="popup-emoji">😡</div>
+            <div class="popup-text">طب مفيش عيييد ميلاد 👑</div>
+            <button class="btn-retry" onclick="closePopup()">حاول تاني</button>
+        </div>
+    </div>
+
+    <div id="surprise-container">
+        
+        <header class="celebrate-header">
+            <p style="letter-spacing: 3px; color: #a64b63; font-size: 14px;">✦ A CELEBRATION ✦</p>
+            <h1 class="celebrate-main-title">Let's Celebrate</h1>
+            <h1 class="celebrate-name-title">Kimo! 🎂</h1>
+            <a href="#memories" class="main-celebrate-btn">!CELEBRATE 🪅</a>
+        </header>
+
+        <section id="memories">
+            <p class="section-title">✦ Memories ✦</p>
+            <h2 class="memories-title">Our <i>Beautiful</i> Moments</h2>
+            
+            <div class="memories-grid">
+                <div class="card"><img src="pic1.jpg" alt="Memory 1"></div>
+                <div class="card"><img src="pic2.jpg" alt="Memory 2"></div>
+                <div class="card"><img src="pic3.jpg" alt="Memory 3"></div>
+                <div class="card"><img src="pic4.jpg" alt="Memory 4"></div>
+                <div class="card"><img src="pic5.jpg" alt="Memory 5"></div>
+                <div class="card"><img src="pic6.jpg" alt="Memory 6"></div>
+            </div>
+        </section>
+
+        <p class="section-title">✦ من القلب ✦</p>
+        <div class="message-box">
+            <p>كل سنه وانت حبيبي وصاحبي واجمل حاجه وكل حاجه في حياتي ❤️❤️❤️🥹</p>
+            <p>العمر كله واحنا مع بعض ومشاركين كل لحظه مع بعض والسنه اللي جايه نكون بنحتفل بيه في بيتنا 🌚</p>
+            <p>وخليك فاكر لو العمر اتعاد ١٠٠٠ مره هختارك في كل مره </p>
+            <p>وكل سنه وانت معايا ♥️</p>
+            
+            <div class="message-en">
+                "Words will never be enough to describe how grateful I am to have you in my life. You are my safe haven, my peace, and my greatest joy. Every single day with you is a blessing, and just knowing you're by my side makes everything better.<br>
+                I promise to love you through it all, to cherish our little moments, and to keep building a beautiful life with you. You have my whole heart, today and always. ❤️"
+            </div>
+        </div>
+
+        <p class="section-title">✦ A MESSAGE ✦</p>
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; color: #3d1b24; font-weight: normal; margin-top: 5px;">🎬 Watch <i>This</i></h2>
+
+        <div class="video-container">
+            <div class="video-wrapper">
+                <video controls playsinline>
+                    <source src="myvideo.mp4" type="video/mp4">
+                    متصفحك لا يدعم تشغيل الفيديو.
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // بيانات الأسئلة والإجابات الصحيحة
+        const quizData = [
+            {
+                question: "السؤال الأول: بتحب إيه أكتر؟",
+                options: ["لوزه", "الكبده", "رنرونه"],
+                correct: 2
+            },
+            {
+                question: "السؤال الثاني: لو جيت في يوم قولتلك مش قادره اطبخ هتعمل ايه؟",
+                options: ["هتقولي انا جعان قومي اعمليلي اي حاجه", "هتقولي ارتاحي يا حبيبتي وانا هجيب اكل جاهز", "هتسيبني وتروح تاكل عند طنط"],
+                correct: 1
+            },
+            {
+                question: "السؤال الثالث: لو اخدت الفيزا بتاعتك وخلصت كل الفلوس اللي فيها؟",
+                options: ["فدايا الفلوس كلها", "هتقولي أن الستات كلها مصرفه", "هتقولي مش هداهالك تاني"],
+                correct: 0
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        function loadQuiz() {
+            const currentData = quizData[currentQuestion];
+            document.getElementById("question-text").innerText = currentData.question;
+            
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+            
+            currentData.options.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.classList.add("btn-quiz");
+                button.innerText = option;
+                button.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const currentData = quizData[currentQuestion];
+            if (selectedIndex === currentData.correct) {
+                currentQuestion++;
+                if (currentQuestion < quizData.length) {
+                    loadQuiz();
+                } else {
+                    document.getElementById("quiz-container").style.display = "none";
+                    document.getElementById("surprise-container").style.display = "block";
+                }
+            } else {
+                document.getElementById("error-popup").style.display = "flex";
+            }
+        }
+
+        function closePopup() {
+            document.getElementById("error-popup").style.display = "none";
+        }
+
+        loadQuiz();
+    </script>
+</body>
+</html>
